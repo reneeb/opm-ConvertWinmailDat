@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_package version="1.0">
+    <CVS>$Id: ConvertWinmailDat.sopm,v 1.1.1.1 2011/04/15 07:49:58 rb Exp $</CVS>
+    <Name>ConvertWinmailDat</Name>
+    <Version>0.0.0</Version>
+    <Framework>3.0.x</Framework>
+    <Framework>3.1.x</Framework>
+    <Vendor>Perl-Services.de</Vendor>
+    <URL>http://www.perl-services.de/</URL>
+    <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
+    <Description Lang="en">Extract mail parts from winmail.dat and add them as attachments to ticket.</Description>
+    <Description Lang="de">Füge Mailkomponenten aus winmail.dat als Anhänge an Ticket hinzu.</Description>
+    <Filelist>
+        <File Permission="644" Location="Kernel/Config/Files/ConvertWinmailDat.xml"/>
+        <File Permission="644" Location="Kernel/System/PostMaster/Filter/ConvertWinmailDat.pm"/>
+        <File Permission="644" Location="Kernel/cpan-lib/Convert/TNEF.pm"/>
+        <File Permission="644" Location="Custom/Kernel/System/ConvertWinmailDat/Utils.pm"/>
+    </Filelist>
+</otrs_package>
