@@ -1,0 +1,37 @@
+=head1 NAME
+
+ConvertWinmailDat - Extract Attachments from winmail.dat
+
+=head1 DESCRIPTION
+
+Sometimes Outlook attaches a winmail.dat file that contains the original attachment(s). That file
+is encoded in a proprietary format and with an other mail client than Outlook, you won't be able
+to get the original attachment(s).
+
+This OTRS plugin is implemented as a PostMaster filter that checks if an incoming mail has a
+file named winmail.dat attached. If such an attachment is found, the original attachments
+are extracted and added to the article. However the winmail.dat attachment is still attached
+to the article.
+
+There is nothing to do after installation.
+
+=head1 INSTALLATION
+
+You can install this package with the built-in OTRS package manager (in the Admin area) or
+on command line:
+
+OTRS 2.4.x:
+
+  perl bin/opm.pl -a install -p ConvertWinmailDat.opm
+
+OTRS >= 3.0.x
+
+  perl bin/otrs.PackageManager.pl -a install -p ConvertWinmailDat.opm
+
+=head1 AUTHOR AND LICENSE
+
+This package is licensed under the terms of AGPL3 (see 
+L<http://www.gnu.org/licenses/agpl.txt>
+
+Copyright (c) 2012 Perl-Services.de, L<http://otrs.perl-services.de>
+

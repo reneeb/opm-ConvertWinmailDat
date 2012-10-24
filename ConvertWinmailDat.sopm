@@ -11,6 +11,7 @@
     <Description Lang="en">Extract mail parts from winmail.dat and add them as attachments to ticket.</Description>
     <Description Lang="de">Füge Mailkomponenten aus winmail.dat als Anhänge an Ticket hinzu.</Description>
     <Filelist>
+        <File Permission="644" Location="doc/en/ConvertWinmailDat.pod"/>
         <File Permission="644" Location="Kernel/Config/Files/ConvertWinmailDat.xml"/>
         <File Permission="644" Location="Kernel/System/PostMaster/Filter/ConvertWinmailDat.pm"/>
         <File Permission="644" Location="Kernel/cpan-lib/Convert/TNEF.pm"/>
