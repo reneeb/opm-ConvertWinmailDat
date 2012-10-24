@@ -46,8 +46,6 @@ sub new {
 
     $Self->{Debug} = $Self->{ConfigObject}->Get('ConvertWinmailDat::Debug');
 
-    $Self->{MimeTypes} = Kernel::System::ConvertWinmailDat::MimeTypes->MimeTypes();
-
     return $Self;
 }
 
@@ -85,8 +83,6 @@ sub Run {
     my $Attachments = $Param{GetParam}->{Attachment};
     for my $Attachment ( @{$Attachments} ) {
         if ( $Attachment->{Filename} =~ m{winmail\.dat\z}i ) {
-
-            my $Types = MIME::Types->new();
 
             if ( $Self->{Debug} ) {
                 $Self->{LogObject}->Log(
@@ -131,17 +127,6 @@ sub Run {
                 }
 
                 my $Path     = $Message->datahandle->path;
-                my $NewPath  = File::Spec->catfile( $Dir, $Message->name );
-
-                if ( rename $Path, $NewPath ) {
-                    $Path = $NewPath;
-                }
-                else {
-                    $Self->{LogObject}->Log(
-                        Priority => 'error',
-                        Message  => "Cannot rename $Path to $NewPath: $!",
-                    );
-                }
 
                 my $MimeType;
 
@@ -155,15 +140,15 @@ sub Run {
                 };
 
                 if ( !$MimeType ) {
+                    my ($Suffix) = $Message->name =~ m{ \. (.*?) \z }xms;
+                    $MimeType    = $Self->{UtilsObject}->MimeTypeOf( Suffix => $Suffix );
+                }
+
+                if ( !$MimeType ) {
                     eval {
                         require File::MimeInfo;
                         $MimeType = File::MimeInfo::mimetype( $Path );
                     };
-                }
-
-                if ( !$MimeType ) {
-                    my ($Suffix) = $Path =~ m{ \. (.*?) \z }xms;
-                    $MimeType    = $Self->{UtilsObject}->MimeTypeOf( Suffix => $Suffix );
                 }
 
                 if ( $Self->{Debug} ) {
