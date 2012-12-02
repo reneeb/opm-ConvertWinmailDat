@@ -14,6 +14,8 @@ package Kernel::System::PostMaster::Filter::ConvertWinmailDat;
 use strict;
 use Convert::TNEF;
 use File::Temp;
+use File::Basename;
+use File::Spec;
 
 use Kernel::System::ConvertWinmailDat::Utils;
 
@@ -43,6 +45,8 @@ sub new {
     $Self->{UtilsObject} = Kernel::System::ConvertWinmailDat::Utils->new( %{$Self} );
 
     $Self->{Debug} = $Self->{ConfigObject}->Get('ConvertWinmailDat::Debug');
+
+    $Self->{MimeTypes} = Kernel::System::ConvertWinmailDat::MimeTypes->MimeTypes();
 
     return $Self;
 }
@@ -81,6 +85,8 @@ sub Run {
     my $Attachments = $Param{GetParam}->{Attachment};
     for my $Attachment ( @{$Attachments} ) {
         if ( $Attachment->{Filename} =~ m{winmail\.dat\z}i ) {
+
+            my $Types = MIME::Types->new();
 
             if ( $Self->{Debug} ) {
                 $Self->{LogObject}->Log(
@@ -125,11 +131,27 @@ sub Run {
                 }
 
                 my $Path     = $Message->datahandle->path;
+                my $NewPath  = File::Spec->catfile( $Dir, $Message->name );
+
+                if ( rename $Path, $NewPath ) {
+                    $Path = $NewPath;
+                }
+                else {
+                    $Self->{LogObject}->Log(
+                        Priority => 'error',
+                        Message  => "Cannot rename $Path to $NewPath: $!",
+                    );
+                }
+
                 my $MimeType;
 
                 eval {
                     my $FileMinusI = qx{file -i $Path};
-                    $MimeType      = (split /\s+/, $FileMinusI, 2)[1]
+                    chomp $FileMinusI;
+
+                    $MimeType      = (split /\s+/, $FileMinusI, 2)[1];
+                    $MimeType      =~ s{ ; \s* charset=.* }{}xms;
+                    1;
                 };
 
                 if ( !$MimeType ) {
@@ -137,6 +159,11 @@ sub Run {
                         require File::MimeInfo;
                         $MimeType = File::MimeInfo::mimetype( $Path );
                     };
+                }
+
+                if ( !$MimeType ) {
+                    my ($Suffix) = $Path =~ m{ \. (.*?) \z }xms;
+                    $MimeType    = $Self->{UtilsObject}->MimeTypeOf( Suffix => $Suffix );
                 }
 
                 if ( $Self->{Debug} ) {
