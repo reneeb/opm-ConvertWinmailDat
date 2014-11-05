@@ -1,8 +1,6 @@
 # --
 # Kernel/System/PostMaster/Filter/ConvertWinmailDat.pm - the global PostMaster module for OTRS
-# Copyright (C) 2011 perl-services.de, http://perl-services.de/
-# --
-# $Id: ConvertWinmailDat.pm,v 1.4 2011/05/31 07:56:35 rb Exp $
+# Copyright (C) 2011 - 2014 perl-services.de, http://perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -17,11 +15,17 @@ use File::Temp;
 use File::Basename;
 use File::Spec;
 
-use Kernel::System::ConvertWinmailDat::Utils;
+our $VERSION = 0.02;
 
-use vars qw($VERSION);
-$VERSION = '$Revision: 1.4 $';
-$VERSION =~ s/^.*:\s(\d+\.\d+)\s.*$/$1/;
+our @ObjectDependencies = qw(
+    Kernel::Config
+    Kernel::System::Log
+    Kernel::System::Encode
+    Kernel::System::Main
+    Kernel::System::DB
+    Kernel::System::Ticket
+    Kernel::System::ConvertWinmailDat::Utils
+);
 
 sub new {
     my $Type  = shift;
@@ -31,20 +35,8 @@ sub new {
     my $Self = {};
     bless( $Self, $Type );
 
-    $Self->{Debug} = $Param{Debug} || 0;
-
-    # get needed objects
-    for my $Object (
-        qw(ConfigObject LogObject DBObject TimeObject MainObject EncodeObject TicketObject)
-        )
-    {
-        $Self->{$Object} = $Param{$Object} || die "Got no $Object!";
-    }
-
-    # create needed objects
-    $Self->{UtilsObject} = Kernel::System::ConvertWinmailDat::Utils->new( %{$Self} );
-
-    $Self->{Debug} = $Self->{ConfigObject}->Get('ConvertWinmailDat::Debug');
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    $Self->{Debug}   = $ConfigObject->Get('ConvertWinmailDat::Debug');
 
     return $Self;
 }
@@ -52,9 +44,15 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
+    my $LogObject    = $Kernel::OM->Get('Kernel::System::Log');
+    my $UtilsObject  = $Kernel::OM->Get('Kernel::System::ConvertWinmailDat::Utils');
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
+    my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+
     for my $Needed (qw(JobConfig GetParam TicketID)) {
         if ( !$Param{$Needed} ) {
-            $Self->{LogObject}->Log(
+            $LogObject->Log(
                 Priority => 'error',
                 Message  => "Need $Needed!",
             );
@@ -65,7 +63,7 @@ sub Run {
     my $MessageID = $Param{GetParam}->{'Message-Id'};
 
     if ( $Self->{Debug} ) {
-        $Self->{LogObject}->Log(
+        $LogObject->Log(
             Priority => 'notice',
             Message  => 'Run ConvertWinmailDat for Message ' . $MessageID,
         );
@@ -73,7 +71,7 @@ sub Run {
 
     return 1 if !$MessageID;
 
-    my $ArticleID = $Self->{UtilsObject}->ArticleIDOfMessageIDGet(
+    my $ArticleID = $UtilsObject->ArticleIDOfMessageIDGet(
         MessageID => $MessageID,
         TicketID  => $Param{TicketID},
     );
@@ -85,7 +83,7 @@ sub Run {
         if ( $Attachment->{Filename} =~ m{winmail\.dat\z}i ) {
 
             if ( $Self->{Debug} ) {
-                $Self->{LogObject}->Log(
+                $LogObject->Log(
                     Priority => 'notice',
                     Message  => 'Found winmail.dat',
                 );
@@ -93,7 +91,7 @@ sub Run {
 
             # save winmail.dat in a temp file
             my $FH = File::Temp->new();
-            $Self->{MainObject}->FileWrite(
+            $MainObject->FileWrite(
                 Location => $FH->filename,
                 Content  => \($Attachment->{Content}),
                 Mode     => 'binmode',
@@ -112,7 +110,7 @@ sub Run {
 
             # attach extracted mail parts
             my $Text         = $TNEF->message;
-            my $InmailUserID = $Self->{ConfigObject}->Get('InmailUserID') || 1;
+            my $InmailUserID = $ConfigObject->Get('InmailUserID') || 1;
 
             MESSAGE:
             for my $Message ( $TNEF->attachments, $Text ) {
@@ -120,7 +118,7 @@ sub Run {
                 next MESSAGE if !$Message || !$Message->datahandle;
 
                 if ( $Self->{Debug} ) {
-                    $Self->{LogObject}->Log(
+                    $LogObject->Log(
                         Priority => 'notice',
                         Message  => "Attachment: " . $Message->name,
                     );
@@ -141,7 +139,7 @@ sub Run {
 
                 if ( !$MimeType ) {
                     my ($Suffix) = $Message->name =~ m{ \. (.*?) \z }xms;
-                    $MimeType    = $Self->{UtilsObject}->MimeTypeOf( Suffix => $Suffix );
+                    $MimeType    = $UtilsObject->MimeTypeOf( Suffix => $Suffix );
                 }
 
                 if ( !$MimeType ) {
@@ -152,13 +150,13 @@ sub Run {
                 }
 
                 if ( $Self->{Debug} ) {
-                    $Self->{LogObject}->Log(
+                    $LogObject->Log(
                         Priority => 'notice',
                         Message  => "$Path // $MimeType",
                     );
                 }
 
-                $Self->{TicketObject}->ArticleWriteAttachment(
+                $TicketObject->ArticleWriteAttachment(
                     ArticleID   => $ArticleID,
                     Filename    => 
                         $Message->longname ||
