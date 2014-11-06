@@ -5,7 +5,7 @@
     <Framework>4.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>http://www.perl-services.de/</URL>
-    <ModuleRequired Version="2.110">IO::Wrap</Module>
+    <ModuleRequired Version="2.110">IO::Wrap</ModuleRequired>
     <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
     <Description Lang="en">Extract mail parts from winmail.dat and add them as attachments to ticket.</Description>
     <Description Lang="de">Füge Mailkomponenten aus winmail.dat als Anhänge an Ticket hinzu.</Description>
