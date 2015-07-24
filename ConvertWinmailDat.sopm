@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
     <Name>ConvertWinmailDat</Name>
-    <Version>4.0.2</Version>
+    <Version>4.0.3</Version>
     <Framework>4.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>http://www.perl-services.de/</URL>
@@ -11,9 +11,12 @@
     <Description Lang="de">Füge Mailkomponenten aus winmail.dat als Anhänge an Ticket hinzu.</Description>
     <Filelist>
         <File Permission="644" Location="doc/en/ConvertWinmailDat.pod"/>
+        <File Permission="644" Location="Custom/Kernel/Modules/AgentTicketConvertWinmailDat.pm"/>
+        <File Permission="644" Location="Custom/Kernel/Output/HTML/OutputFilterConvertWinmail.pm"/>
         <File Permission="644" Location="Kernel/Config/Files/ConvertWinmailDat.xml"/>
         <File Permission="644" Location="Kernel/System/PostMaster/Filter/ConvertWinmailDat.pm"/>
         <File Permission="644" Location="Kernel/cpan-lib/Convert/TNEF.pm"/>
         <File Permission="644" Location="Kernel/System/ConvertWinmailDat/Utils.pm"/>
+        <File Permission="644" Location="Kernel/Language/de_ConvertWinmailDat.pm"/>
     </Filelist>
 </otrs_package>
