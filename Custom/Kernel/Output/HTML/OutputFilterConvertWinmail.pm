@@ -85,11 +85,9 @@ sub Run {
             next ARTICLEID;
         }
 
-            $LogObject->Log( Priority => error => Message => sprintf "%s - %s", $LayoutObject->{SessionName}, $LayoutObject->{SessionID} );
         # check if session cookies are used, append the session id otherwise
         my $SessionID = '';
         if ( ! $ConfigObject->Get('SessionUseCookie') ) {
-            $LogObject->Log( Priority => error => Message => sprintf "%s - %s", $LayoutObject->{SessionName}, $LayoutObject->{SessionID} );
             $SessionID = sprintf '&%s=%s', $LayoutObject->{SessionName}, $LayoutObject->{SessionID};
         }
 
