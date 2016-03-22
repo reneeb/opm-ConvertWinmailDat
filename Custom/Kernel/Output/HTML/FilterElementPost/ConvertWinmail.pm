@@ -1,13 +1,12 @@
 # --
-# Kernel/Output/HTML/OutputFilterConvertWinmail.pm
-# Copyright (C) 2015 Perl-Services.de, http://www.perl-services.de/
+# Copyright (C) 2015 - 2016 Perl-Services.de, http://www.perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
 # did not receive this file, see http://www.gnu.org/licenses/agpl.txt.
 # --
 
-package Kernel::Output::HTML::OutputFilterConvertWinmail;
+package Kernel::Output::HTML::FilterElementPost::ConvertWinmail;
 
 use strict;
 use warnings;

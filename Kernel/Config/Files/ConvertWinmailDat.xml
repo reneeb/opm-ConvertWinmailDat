@@ -28,7 +28,7 @@
         <SubGroup>OutputFilter</SubGroup>
         <Setting>
             <Hash>
-                <Item Key="Module">Kernel::Output::HTML::OutputFilterConvertWinmail</Item>
+                <Item Key="Module">Kernel::Output::HTML::FilterElementPost::ConvertWinmail</Item>
                 <Item Key="Debug">0</Item>
                 <Item Key="Templates">
                     <Hash>
