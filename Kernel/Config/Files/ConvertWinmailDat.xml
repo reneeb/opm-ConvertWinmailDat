@@ -7,8 +7,8 @@
         <SubGroup>Core</SubGroup>
         <Setting>
             <Option SelectedID="0">
-                <Item Key="0">No</Item>
-                <Item Key="1">Yes</Item>
+                <Item Key="0" Translatable="1">No</Item>
+                <Item Key="1" Translatable="1">Yes</Item>
             </Option>
         </Setting>
     </ConfigItem>
@@ -39,15 +39,14 @@
         </Setting>
     </ConfigItem>
     <ConfigItem Name="Frontend::Module###AgentTicketConvertWinmailDat" Required="0" Valid="1">
-        <Description Lang="en">Frontend module registration for the AgentTicketConvertWinmailDat module.</Description>
-        <Description Lang="de">Frontendmodul-Registration für das AgentTicketConvertWinmailDat Modul.</Description>
+        <Description  Translatable="1">Frontend module registration for the AgentTicketConvertWinmailDat module.</Description>
         <Group>ConvertWinmailDat</Group>
         <SubGroup>Frontend::Agent::ModuleRegistration</SubGroup>
         <Setting>
             <FrontendModuleReg>
-                <Description>ConvertWinmailDat</Description>
+                <Description Translatable="1">Convert winmail.dat attachment.</Description>
                 <NavBarName></NavBarName>
-                <Title>ConvertWinmailDat</Title>
+                <Title Translatable="1">Convert winmail.dat</Title>
             </FrontendModuleReg>
         </Setting>
     </ConfigItem>
