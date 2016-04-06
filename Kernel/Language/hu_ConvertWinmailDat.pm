@@ -1,6 +1,7 @@
 # --
 # Kernel/Language/hu_ConvertWinmailDat.pm - the Hungarian translation of ConvertWinmailDat
 # Copyright (C) 2016 Perl-Services, http://www.perl-services.de
+# Copyright (C) 2015 Balázs Úr, http://www.otrs-megoldasok.hu
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
