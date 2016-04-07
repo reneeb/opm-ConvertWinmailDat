@@ -1,0 +1,42 @@
+=head1 NÉV
+
+ConvertWinmailDat - Mellékletek kibontása winmail.dat fájlból
+
+=head1 LEÍRÁS
+
+Az Outlook néha egy winmail.dat fájlt csatol, amely az eredeti mellékleteket tartalmazza. Az
+a fájl szabadalomvédett formátummal kódolt, és az Outlooktól eltérő levelezőklienssel nem
+lesz képes az eredeti mellékleteket megszerezni.
+
+Ez az OTRS bővítmény egy olyan PostMaster szűrőként lett megvalósítva, amely leellenőrzi,
+hogy egy bejövő levélnek van-e mellékelt winmail.dat nevű fájlja. Ha egy ilyen melléklet
+található, akkor az eredeti mellékletek ki lesznek bontva, és hozzá lesznek adva a
+bejegyzéshez. Azonban a winmail.dat melléklet továbbra is a bejegyzéshez lesz csatolva.
+
+A telepítés után nincs további tennivaló.
+
+=head1 TELEPÍTÉS
+
+Ezt a csomagot telepítheti a beépített OTRS csomagkezelővel (az Adminisztrációs területen)
+vagy parancssorból:
+
+OTRS 2.4.x:
+
+  perl bin/opm.pl -a install -p ConvertWinmailDat.opm
+
+OTRS >= 3.0.x
+
+  perl bin/otrs.PackageManager.pl -a install -p ConvertWinmailDat.opm
+
+=head1 SZERZŐ ÉS LICENC
+
+Ez a csomag az AGPL3 feltételi szerint licencelt. Lásd: 
+L<http://www.gnu.org/licenses/agpl.txt>
+
+Copyright (c) 2012 Perl-Services.de, L<http://otrs.perl-services.de>
+
+=head1 MAGYAR FORDÍTÁS
+
+A magyar fordítást az OTRS-megoldások csapata készítette.
+Copyright (c) 2015 Úr Balázs, L<http://otrs-megoldasok.hu>
+

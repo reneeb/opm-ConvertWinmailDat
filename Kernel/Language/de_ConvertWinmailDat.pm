@@ -1,5 +1,5 @@
 # --
-# Kernel/Language/de_ConvertWinmailDat.pm - the german translation of ConvertWinmailDat
+# Kernel/Language/de_ConvertWinmailDat.pm - the German translation of ConvertWinmailDat
 # Copyright (C) 2015 Perl-Services, http://www.perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
@@ -21,7 +21,16 @@ sub Data {
 
     return if ref $Lang ne 'HASH';
 
-    $Lang->{"Convert TNEF attachments"} = 'Konvertiere TNEF-Anhänge';
+    $Lang->{'Convert TNEF attachments'} = 'Konvertiere TNEF-Anhänge';
+    $Lang->{'Enable Debugging for ConvertWinmailDat.'} = '';
+    $Lang->{'No'} = '';
+    $Lang->{'Yes'} = '';
+    $Lang->{'Module to convert winmail.dat attachments.'} = '';
+    $Lang->{'Add "convert" button to article menu.'} = '';
+    $Lang->{'Frontend module registration for the AgentTicketConvertWinmailDat module.'} =
+        'Frontendmodul-Registration für das AgentTicketConvertWinmailDat Modul.';
+    $Lang->{'Convert winmail.dat attachment.'} = '';
+    $Lang->{'Convert winmail.dat'} = '';
 
     return 1;
 }

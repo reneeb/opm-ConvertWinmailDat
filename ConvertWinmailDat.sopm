@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
     <Name>ConvertWinmailDat</Name>
-    <Version>5.0.1</Version>
+    <Version>5.0.2</Version>
     <Framework>4.0.x</Framework>
     <Framework>5.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>http://www.perl-services.de/</URL>
     <ModuleRequired Version="2.110">IO::Wrap</ModuleRequired>
     <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
+    <ChangeLog Version="5.0.2" Date="2016-04-06 18:34:21">Added Hungarian translation, thanks to Balázs Úr.</ChangeLog>
     <Description Lang="en">Extract mail parts from winmail.dat and add them as attachments to ticket.</Description>
     <Description Lang="de">Füge Mailkomponenten aus winmail.dat als Anhänge an Ticket hinzu.</Description>
+    <Description Lang="hu">Levélrészek kibontása a winmail.dat fájlból, majd azok hozzáadása mellékletként a jegyhez.</Description>
     <Filelist>
         <File Permission="644" Location="doc/en/ConvertWinmailDat.pod"/>
+        <File Permission="644" Location="doc/hu/ConvertWinmailDat.pod"/>
         <File Permission="644" Location="Custom/Kernel/Modules/AgentTicketConvertWinmailDat.pm"/>
         <File Permission="644" Location="Custom/Kernel/Output/HTML/FilterElementPost/ConvertWinmail.pm"/>
         <File Permission="644" Location="Kernel/Config/Files/ConvertWinmailDat.xml"/>
@@ -19,5 +22,6 @@
         <File Permission="644" Location="Kernel/cpan-lib/Convert/TNEF.pm"/>
         <File Permission="644" Location="Kernel/System/ConvertWinmailDat/Utils.pm"/>
         <File Permission="644" Location="Kernel/Language/de_ConvertWinmailDat.pm"/>
+        <File Permission="644" Location="Kernel/Language/hu_ConvertWinmailDat.pm"/>
     </Filelist>
 </otrs_package>
