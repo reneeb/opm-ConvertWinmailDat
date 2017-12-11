@@ -1,6 +1,5 @@
 # --
-# Kernel/System/ConvertWinmailDat/Utils.pm - helper module for ConvertWinmailDat
-# Copyright (C) 2012 - 2014 Perl-Services.de, http://perl-services.de
+# Copyright (C) 2012 - 2017 Perl-Services.de, http://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -11,8 +10,6 @@ package Kernel::System::ConvertWinmailDat::Utils;
 
 use strict;
 use warnings;
-
-our $VERSION = 0.02;
 
 our @ObjectDependencies = qw(
     Kernel::Config
@@ -61,8 +58,9 @@ get article id of given message id
 sub ArticleIDOfMessageIDGet {
     my ( $Self, %Param ) = @_;
 
-    my $LogObject = $Kernel::OM->Get('Kernel::System::Log');
-    my $DBObject  = $Kernel::OM->Get('Kernel::System::DB');
+    my $LogObject  = $Kernel::OM->Get('Kernel::System::Log');
+    my $DBObject   = $Kernel::OM->Get('Kernel::System::DB');
+    my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
 
     # check needed stuff
     if ( !$Param{MessageID} ) {
@@ -74,11 +72,19 @@ sub ArticleIDOfMessageIDGet {
         return;
     }
 
-    my $SQL  = 'SELECT id FROM article WHERE a_message_id = ?'; 
-    my @Bind = ( \$Param{MessageID} );
+
+    my $MD5 = $MainObject->MD5sum( String => $Param{MessageID} );
+
+    # Get ticket and article ID from meta article table.
+    my $SQL = qq~
+            SELECT sa.id, sa.ticket_id FROM article sa
+            LEFT JOIN article_data_mime sadm ON sa.id = sadm.article_id
+            WHERE sadm.a_message_id_md5 = ?
+    ~;
+    my @Bind  = ( \$MD5 );
 
     if ( $Param{TicketID} ) {
-        $SQL .= ' AND ticket_id = ?';
+        $SQL .= ' AND sa.ticket_id = ?';
         push @Bind, \$Param{TicketID};
     }
 

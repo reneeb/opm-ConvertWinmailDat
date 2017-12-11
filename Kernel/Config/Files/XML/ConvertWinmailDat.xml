@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<otrs_config version="2.0" init="Application">
+    <CVS>$Id: ConvertWinmailDat.xml,v 1.500 2012/02/14 08:59:22 mg Exp $</CVS>
+    <Setting Name="ConvertWinmailDat::Debug" Required="0" Valid="1">
+        <Description Translatable="1">Enable Debugging for ConvertWinmailDat.</Description>
+        <Navigation>Core</Navigation>
+        <Value>
+            <Item ValueType="Checkbox">0</Item>
+        </Value>
+    </Setting>
+    <Setting Name="PostMaster::PostFilterModule###103-ConvertWinmailDat" Required="0" Valid="1">
+        <Description Translatable="1">Module to convert winmail.dat attachments.</Description>
+        <Navigation>Core::Email::PostMaster</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::System::PostMaster::Filter::ConvertWinmailDat</Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Output::FilterElementPost###OutputFilterConvertWinmail" Required="0" Valid="1">
+        <Description Translatable="1">Add "convert" button to article menu.</Description>
+        <Navigation>Frontend::Base::OutputFilter</Navigation>
+        <Value>
+            <Hash>
+                <Item Key="Module">Kernel::Output::HTML::FilterElementPost::ConvertWinmail</Item>
+                <Item Key="Debug">0</Item>
+                <Item Key="Templates">
+                    <Hash>
+                        <Item Key="AgentTicketZoom">1</Item>
+                    </Hash>
+                </Item>
+            </Hash>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Module###AgentTicketConvertWinmailDat" Required="0" Valid="1">
+        <Description  Translatable="1">Frontend module registration for the AgentTicketConvertWinmailDat module.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration</Navigation>
+        <Value>
+            <Item ValueType="FrontendRegistration">
+                <Hash>
+                    <Item Key="Group">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="GroupRo">
+                        <Array>
+                        </Array>
+                    </Item>
+                    <Item Key="Description" Translatable="1">Convert winmail.dat attachment.</Item>
+                    <Item Key="NavBarName"></Item>
+                    <Item Key="Title" Translatable="1">Convert winmail.dat</Item>
+                </Hash>
+            </Item>
+        </Value>
+    </Setting>
+    <Setting Name="Frontend::Navigation###AgentTicketConvertWinmailDat###002-ConvertWinmailDat" Required="0" Valid="0">
+        <Description Translatable="1">Main menu item registration.</Description>
+        <Navigation>Frontend::Agent::ModuleRegistration::MainMenu</Navigation>
+        <Value>
+            <Array>
+                <DefaultItem ValueType="FrontendNavigation">
+                    <Hash>
+                    </Hash>
+                </DefaultItem>
+            </Array>
+        </Value>
+    </Setting>
+
+</otrs_config>

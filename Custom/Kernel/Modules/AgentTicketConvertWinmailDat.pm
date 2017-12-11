@@ -1,6 +1,5 @@
 # --
-# Kernel/Modules/AgentTicketConvertWinmailDat.pm - convert tnef attachments of an article
-# Copyright (C) 2015 Perl-Services.de, http://www.perl-services.de
+# Copyright (C) 2015 - 2017 Perl-Services.de, http://www.perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -19,6 +18,7 @@ our @ObjectDependencies = qw(
     Kernel::Config
     Kernel::Output::HTML::Layout
     Kernel::System::Ticket
+    Kernel::System::Ticket::Article
     Kernel::System::User
     Kernel::System::Log
     Kernel::System::Web::Request
@@ -38,15 +38,16 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    my $ParamObject  = $Kernel::OM->Get('Kernel::System::Web::Request');
-    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $LayoutObject = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
-    my $UserObject   = $Kernel::OM->Get('Kernel::System::User');
-    my $UtilsObject  = $Kernel::OM->Get('Kernel::System::ConvertWinmailDat::Utils');
-    my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
-    my $LogObject    = $Kernel::OM->Get('Kernel::System::Log');
-    my $EncodeObject = $Kernel::OM->Get('Kernel::System::Encode');
+    my $ParamObject   = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $TicketObject  = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
+    my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
+    my $LayoutObject  = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $UserObject    = $Kernel::OM->Get('Kernel::System::User');
+    my $UtilsObject   = $Kernel::OM->Get('Kernel::System::ConvertWinmailDat::Utils');
+    my $MainObject    = $Kernel::OM->Get('Kernel::System::Main');
+    my $LogObject     = $Kernel::OM->Get('Kernel::System::Log');
+    my $EncodeObject  = $Kernel::OM->Get('Kernel::System::Encode');
 
     my @Params = (qw(ArticleID));
     my %GetParam;
@@ -54,12 +55,21 @@ sub Run {
         $GetParam{$_} = $ParamObject->GetParam( Param => $_ ) || '';
     }
 
-    my %Article = $TicketObject->ArticleGet(
+    my $TicketID = $ArticleObject->TicketIDLookup( ArticleID => $GetParam{ArticleID} );
+
+    my $BackendObject = $ArticleObject->BackendForArticle(
         ArticleID => $GetParam{ArticleID},
-        UserID    => $Self->{UserID},
+        TicketID  => $TicketID,
     );
 
-    my %Attachments = $TicketObject->ArticleAttachmentIndex(
+    return 1 if !$BackendObject->can('ArticleAttachmentIndex');
+
+    my %Article = $BackendObject->ArticleGet(
+        ArticleID => $GetParam{ArticleID},
+        TicketID  => $TicketID,
+    );
+
+    my %Attachments = $BackendObject->ArticleAttachmentIndex(
         ArticleID => $GetParam{ArticleID},
         UserID    => $Self->{UserID},
     );
@@ -73,7 +83,7 @@ sub Run {
             $Attachment->{ContentType} =~ m{application/ms-tnef} ||
             lc $Attachment->{Filename} eq 'winmail.dat' ) {
 
-            my %AttachmentInfo = $TicketObject->ArticleAttachment(
+            my %AttachmentInfo = $BackendObject->ArticleAttachment(
                 ArticleID => $GetParam{ArticleID},
                 FileID    => $ID,
                 UserID    => $Self->{UserID},
@@ -155,7 +165,7 @@ sub Run {
                     );
                 }
 
-                $TicketObject->ArticleWriteAttachment(
+                $BackendObject->ArticleWriteAttachment(
                     ArticleID   => $GetParam{ArticleID},
                     Filename    => $Filename,
                     Content     => $Message->data,
@@ -175,7 +185,7 @@ sub Run {
     return $LayoutObject->Redirect(
         OP => sprintf '%sAction=AgentTicketZoom&TicketID=%s&ArticleID=%s%s',
             $Baselink,
-            $Article{TicketID},
+            $TicketID,
             $GetParam{ArticleID},
             $SessionID,
     );

@@ -42,6 +42,7 @@ sub Run {
 
     my $LanguageObject = $Kernel::OM->Get('Kernel::Language');
     my $TicketObject   = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $ArticleObject  = $Kernel::OM->Get('Kernel::System::Ticket::Article');
     my $LayoutObject   = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
     my $ParamObject    = $Kernel::OM->Get('Kernel::System::Web::Request');
     my $LogObject      = $Kernel::OM->Get('Kernel::System::Log');
@@ -57,11 +58,22 @@ sub Run {
 
     return if ${ $Param{Data} } =~ m{$ButtonText</a>};
 
+    my $TicketID = $ParamObject->GetParam( Param => 'TicketID' );
+
     ARTICLEID:
     for my $ArticleID ( @ArticleIDs ) {
-        my %Attachments = $TicketObject->ArticleAttachmentIndex(
+        my $BackendObject = $ArticleObject->BackendForArticle(
             ArticleID => $ArticleID,
-            UserID    => $Self->{UserID},
+            TicketID  => $TicketID,
+        );
+
+        next ARTICLEID if !$BackendObject->can('ArticleAttachmentIndex');
+
+        my %Attachments = $BackendObject->ArticleAttachmentIndex(
+            ArticleID        => $ArticleID,
+            ExcludePlainText => 1,
+            ExcludeHTMLBody  => 1,
+            ExcludeInline    => 1,
         );
 
         next ARTICLEID if !%Attachments;

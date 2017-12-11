@@ -1,6 +1,5 @@
 # --
-# Kernel/System/PostMaster/Filter/ConvertWinmailDat.pm - the global PostMaster module for OTRS
-# Copyright (C) 2011 - 2014 perl-services.de, http://perl-services.de/
+# Copyright (C) 2011 - 2017 perl-services.de, http://perl-services.de/
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -15,8 +14,6 @@ use File::Temp;
 use File::Basename;
 use File::Spec;
 
-our $VERSION = 0.02;
-
 our @ObjectDependencies = qw(
     Kernel::Config
     Kernel::System::Log
@@ -24,6 +21,7 @@ our @ObjectDependencies = qw(
     Kernel::System::Main
     Kernel::System::DB
     Kernel::System::Ticket
+    Kernel::System::Ticket::Article
     Kernel::System::ConvertWinmailDat::Utils
 );
 
@@ -44,11 +42,12 @@ sub new {
 sub Run {
     my ( $Self, %Param ) = @_;
 
-    my $LogObject    = $Kernel::OM->Get('Kernel::System::Log');
-    my $UtilsObject  = $Kernel::OM->Get('Kernel::System::ConvertWinmailDat::Utils');
-    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
-    my $ConfigObject = $Kernel::OM->Get('Kernel::Config');
-    my $MainObject   = $Kernel::OM->Get('Kernel::System::Main');
+    my $LogObject     = $Kernel::OM->Get('Kernel::System::Log');
+    my $UtilsObject   = $Kernel::OM->Get('Kernel::System::ConvertWinmailDat::Utils');
+    my $TicketObject  = $Kernel::OM->Get('Kernel::System::Ticket');
+    my $ArticleObject = $Kernel::OM->Get('Kernel::System::Ticket::Article');
+    my $ConfigObject  = $Kernel::OM->Get('Kernel::Config');
+    my $MainObject    = $Kernel::OM->Get('Kernel::System::Main');
 
     for my $Needed (qw(JobConfig GetParam TicketID)) {
         if ( !$Param{$Needed} ) {
@@ -77,6 +76,11 @@ sub Run {
     );
 
     return 1 if !$ArticleID;
+
+    my $BackendObject = $ArticleObject->BackendForArticle(
+        ArticleID => $ArticleID,
+        TicketID  => $Param{TicketID},
+    );
    
     my $Attachments = $Param{GetParam}->{Attachment};
     for my $Attachment ( @{$Attachments} ) {
@@ -124,7 +128,7 @@ sub Run {
                     );
                 }
 
-                my $Path     = $Message->datahandle->path;
+                my $Path = $Message->datahandle->path;
 
                 my $MimeType;
 
@@ -156,7 +160,7 @@ sub Run {
                     );
                 }
 
-                $TicketObject->ArticleWriteAttachment(
+                $BackendObject->ArticleWriteAttachment(
                     ArticleID   => $ArticleID,
                     Filename    => 
                         $Message->longname ||
