@@ -1,6 +1,6 @@
 # --
 # Kernel/Language/de_ConvertWinmailDat.pm - the German translation of ConvertWinmailDat
-# Copyright (C) 2015 - 2016 Perl-Services, http://www.perl-services.de
+# Copyright (C) 2015 - 2022 Perl-Services, https://www.perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
